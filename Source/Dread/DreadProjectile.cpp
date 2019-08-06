@@ -3,6 +3,7 @@
 #include "DreadProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 ADreadProjectile::ADreadProjectile() 
 {
@@ -34,9 +35,27 @@ ADreadProjectile::ADreadProjectile()
 void ADreadProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+
+		FVector scale{ OtherComp->GetComponentScale() };
+		scale *= 0.8f;
+
+		if (scale.GetMin() > 0.5f)
+		{
+			OtherComp->SetWorldScale3D(scale);
+		}
+		else
+		{
+			OtherActor->Destroy();
+		}
+
+		UMaterialInstanceDynamic* matInst{ OtherComp->CreateAndSetMaterialInstanceDynamic(0) };
+		if (matInst)
+		{
+			matInst->SetVectorParameterValue("Color", FLinearColor::MakeRandomColor());
+		}
 
 		Destroy();
 	}

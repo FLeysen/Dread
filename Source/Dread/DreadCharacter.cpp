@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "Public/DreadBombActor.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -119,6 +120,7 @@ void ADreadCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ADreadCharacter::OnFire);
+	PlayerInputComponent->BindAction("SpawnBomb", IE_Pressed, this, &ADreadCharacter::SpawnBomb);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
@@ -141,7 +143,7 @@ void ADreadCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 void ADreadCharacter::OnFire()
 {
 	// try and fire a projectile
-	if (ProjectileClass != NULL)
+	if (ProjectileClass)
 	{
 		UWorld* const World = GetWorld();
 		if (World != NULL)
@@ -184,6 +186,11 @@ void ADreadCharacter::OnFire()
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
 		}
 	}
+}
+
+void ADreadCharacter::SpawnBomb()
+{
+	ADreadBombActor* bomb{ GetWorld()->SpawnActor<ADreadBombActor>(BombClass, GetActorLocation(), GetActorRotation()) };
 }
 
 void ADreadCharacter::OnResetVR()

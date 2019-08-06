@@ -7,6 +7,7 @@
 #include "DreadCharacter.generated.h"
 
 class UInputComponent;
+class ADreadBombActor;
 
 UCLASS(config=Game)
 class ADreadCharacter : public ACharacter
@@ -68,6 +69,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class ADreadProjectile> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly, Category=Bombs)
+	TSubclassOf<ADreadBombActor> BombClass;
+
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	class USoundBase* FireSound;
@@ -84,6 +88,8 @@ protected:
 	
 	/** Fires a projectile. */
 	void OnFire();
+
+	void SpawnBomb();
 
 	/** Resets HMD orientation and position in VR. */
 	void OnResetVR();
