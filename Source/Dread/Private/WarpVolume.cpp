@@ -62,9 +62,6 @@ void AWarpVolume::Tick(float DeltaTime)
 	FVector playerForward{ Player->GetActorForwardVector() };
 	FVector arrowForward{ ArrowComponent->GetForwardVector() };
 	float angle{ float(atan2(playerForward.Y, playerForward.X) - atan2(arrowForward.Y, arrowForward.X)) * 180.f / PI };
-	UE_LOG(LogTemp, Warning, TEXT("Angle is %f"), angle);
-	UE_LOG(LogTemp, Warning, TEXT("Forward of player is %s"), *playerForward.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Forward of arrow is %s"), *arrowForward.ToString());
 
 	if (angle < MaxHorizontalAngleFromArrow || angle > (360.0f - MaxHorizontalAngleFromArrow))
 	{
