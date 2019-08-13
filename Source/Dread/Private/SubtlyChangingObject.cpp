@@ -27,6 +27,7 @@ void ASubtlyChangingObject::BeginPlay()
 	Super::BeginPlay();
 	Mesh->SetVisibility(true);
 	Visualizer->SetActive(false);
+	Visualizer->SetVisibility(false);
 	DisplayMode = ETransformTargetDisplayMode::ObjectOnly;
 }
 
@@ -43,7 +44,7 @@ void ASubtlyChangingObject::SimpleReceive_Implementation()
 
 	DisplayMode = ETransformTargetDisplayMode::TargetOnly;
 	FRotator orientation{ RotationChange.X, RotationChange.Y, RotationChange.Z };
-	Mesh->SetWorldLocationAndRotation(GetActorLocation() + PositionChange, orientation);
+	Mesh->SetWorldLocationAndRotation(GetActorLocation() + PositionChange / GetActorScale(), orientation);
 	return;
 }
 
