@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Public/ReactsToTrigger.h"
 
 // Sets default values
 AWarpVolume::AWarpVolume()
@@ -14,6 +15,7 @@ AWarpVolume::AWarpVolume()
 	, MaxHorizontalAngleFromArrow{ 30.f }
 	, TeleportDirection{}
 	, PlaceholderMeshComponent{ CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent")) }
+	, TriggerReceivers{}
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -30,7 +32,7 @@ AWarpVolume::AWarpVolume()
 void AWarpVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	PlaceholderMeshComponent->SetVisibility(false);
 }
 
 void AWarpVolume::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -68,6 +70,11 @@ void AWarpVolume::Tick(float DeltaTime)
 		FVector teleportTarget{ TeleportDirection + Player->GetActorLocation() };
 		Player->SetActorLocation(teleportTarget, false, nullptr, ETeleportType::TeleportPhysics);
 		Player = nullptr;
+		for (AActor* const receiverObject : TriggerReceivers)
+		{ 
+			IReactsToTrigger* receiver{ Cast<IReactsToTrigger>(receiverObject) };
+			receiver->Execute_SimpleReceive(receiverObject);
+		}
 	}
 }
 

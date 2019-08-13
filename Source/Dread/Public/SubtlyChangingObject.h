@@ -50,6 +50,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = TriggerResponses)
-		bool SimpleReceive();
-		virtual bool SimpleReceive_Implementation() override;
+		void SimpleReceive();
+		virtual void SimpleReceive_Implementation() override;
 };

@@ -27,6 +27,7 @@ void ASubtlyChangingObject::BeginPlay()
 	Super::BeginPlay();
 	Mesh->SetVisibility(true);
 	Visualizer->SetActive(false);
+	DisplayMode = ETransformTargetDisplayMode::ObjectOnly;
 }
 
 // Called every frame
@@ -36,17 +37,21 @@ void ASubtlyChangingObject::Tick(float DeltaTime)
 
 }
 
-bool ASubtlyChangingObject::SimpleReceive_Implementation()
+void ASubtlyChangingObject::SimpleReceive_Implementation()
 {
+	if (DisplayMode != ETransformTargetDisplayMode::ObjectOnly) return ;
 
-	return true;
+	DisplayMode = ETransformTargetDisplayMode::TargetOnly;
+	FRotator orientation{ RotationChange.X, RotationChange.Y, RotationChange.Z };
+	Mesh->SetWorldLocationAndRotation(GetActorLocation() + PositionChange, orientation);
+	return;
 }
 
 void ASubtlyChangingObject::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.GetPropertyName() == FName(TEXT("Mesh"))) Visualizer->SetStaticMesh(Mesh->GetStaticMesh());
+	if (PropertyChangedEvent.GetPropertyName() == FName(TEXT("Mesh")) || (!Visualizer->GetStaticMesh())) Visualizer->SetStaticMesh(Mesh->GetStaticMesh());
 	switch (DisplayMode)
 	{
 	case ETransformTargetDisplayMode::ObjectOnly:
@@ -55,6 +60,7 @@ void ASubtlyChangingObject::PostEditChangeProperty(FPropertyChangedEvent& Proper
 		Visualizer->SetVisibility(false);
 		break;
 	case ETransformTargetDisplayMode::PreviewTarget:
+		Mesh->SetVisibility(true);
 		Visualizer->SetActive(true);
 		Visualizer->SetVisibility(true);
 		break;

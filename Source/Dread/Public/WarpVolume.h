@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TriggerBroadcaster.h"
 #include "WarpVolume.generated.h"
 
 class UBoxComponent;
@@ -50,4 +51,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
 	UStaticMeshComponent* PlaceholderMeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
+	TArray<AActor*> TriggerReceivers;
 };
